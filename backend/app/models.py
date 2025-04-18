@@ -9,7 +9,7 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String, nullable=False)  # Ensure password is not null
     role = Column(String) 
-
+    is_active = Column(Boolean, default=True) 
 class InventoryItem(Base):
     __tablename__ = "inventory"
     id = Column(Integer, primary_key=True, index=True)

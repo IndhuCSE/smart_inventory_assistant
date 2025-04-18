@@ -60,3 +60,6 @@ class SaleOut(SaleIn):
 
     class Config:
         from_attributes = True
+
+class StaffResponse(BaseModel):
+    username: str
