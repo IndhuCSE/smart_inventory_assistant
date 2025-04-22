@@ -16,7 +16,7 @@ class InventoryItem(Base):
     name = Column(String, index=True)
     quantity = Column(Integer)
     price = Column(Float)
-    low_stock_threshold = Column(Integer)
+    low_stock_threshold = Column(Integer, nullable=False)
 
     # Optional: Create a bidirectional relationship with Sale
     sales = relationship("Sale", back_populates="item")

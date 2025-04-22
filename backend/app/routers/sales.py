@@ -1,44 +1,58 @@
-from typing import Any
-import csv
-from datetime import datetime
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException,Depends
+from app.ml import predict_from_db
 from sqlalchemy.orm import Session
-from app import database, models
 import pandas as pd
+from app import models
+from app.database import get_db
 router = APIRouter(prefix="/sales", tags=["sales"])
 
-
-
-@router.post("/upload")
-def upload_sales_data(file: UploadFile = File(...), db: Session = Depends(database.get_db)):
+@router.post("/sales/import")
+def import_sales(file: UploadFile = File(...), db: Session = Depends(get_db)):
     try:
-        if file.filename.endswith(".csv"):
-            df = pd.read_csv(file.file)
-        elif file.filename.endswith(".xlsx"):
-            df = pd.read_excel(file.file)
-        else:
-            raise HTTPException(status_code=400, detail="Unsupported file format. Please upload a .csv or .xlsx file.")
-
+        df = pd.read_csv(file.file)
         for _, row in df.iterrows():
-            try:
-                item_id = int(row["item_id"])
-                quantity_sold = int(row["quantity_sold"])
-                sale_date_str = row.get("sale_date")
-                sale_date = datetime.strptime(sale_date_str, "%Y-%m-%d") if pd.notnull(sale_date_str) else datetime.utcnow()
-
-                sale = models.Sale(
-                    item_id=item_id,
-                    quantity_sold=quantity_sold,
-                    sale_date=sale_date
-                )
-                db.add(sale)
-
-            except (ValueError, KeyError) as e:
-                raise HTTPException(status_code=400, detail=f"Data error in row: {row.to_dict()}")
-
+            sale = models.Sale(
+                item_id=row['item_id'],
+                sale_date=pd.to_datetime(row['date']),
+                quantity_sold=row['quantity']
+            )
+            db.add(sale)
         db.commit()
-        return {"status": "uploaded"}
-
+        return {"message": "Sales data imported successfully"}
     except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+        print("❌ Error during import:", e)
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+
+
+
+
+
+
+
+# from fastapi import APIRouter, UploadFile, File, HTTPException
+# import pandas as pd
+# from sqlalchemy.orm import Session
+# from app.database import get_db
+# from app import models
+# from fastapi import Depends
+
+# router = APIRouter(prefix="/sales", tags=["sales"])
+
+# @router.post("/sales/import")
+# def import_sales(file: UploadFile = File(...), db: Session = Depends(get_db)):
+#     try:
+#         df = pd.read_csv(file.file)
+#         for _, row in df.iterrows():
+#             sale = models.Sale(
+#                 item_id=row['item_id'],
+#                 sale_date=pd.to_datetime(row['date']),
+#                 quantity_sold=row['quantity']
+#             )
+#             db.add(sale)
+#         db.commit()
+#         return {"message": "Sales data imported successfully"}
+#     except Exception as e:
+#         print("❌ Error during import:", e)
+#         raise HTTPException(status_code=500, detail="Internal Server Error")

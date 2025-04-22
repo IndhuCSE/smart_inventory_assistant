@@ -63,3 +63,11 @@ class SaleOut(SaleIn):
 
 class StaffResponse(BaseModel):
     username: str
+
+class StockItem(BaseModel):
+    id: int
+    name: str
+    quantity: int
+
+    class Config:
+        from_attributes = True

@@ -1,6 +1,6 @@
 from fastapi import FastAPI,Form,File,UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, inventory, sales, analytics
+from app.routers import auth, inventory, sales, analytics,prediction
 from fastapi.responses import JSONResponse
 from app.database import Base, engine
 
@@ -23,6 +23,7 @@ app.include_router(auth.auth_router)
 app.include_router(inventory.router)
 app.include_router(sales.router)
 app.include_router(analytics.router)
+app.include_router(prediction.router)
 
 
 
