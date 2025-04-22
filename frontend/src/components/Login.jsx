@@ -9,8 +9,7 @@ export default function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Replace with actual auth logic
-    alert(`Logging in as ${email}`);
+    navigate("/home"); // Replace with actual authentication logic
   };
 
   const handleForgotPassword = () => {
@@ -34,7 +33,7 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required
+              // required
               className="w-full px-4 py-2 border border-gray-100 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
             />
           </div>
@@ -45,7 +44,7 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
+              // required
               className="w-full px-4 py-2 border border-gray-100 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
             />
           </div>
