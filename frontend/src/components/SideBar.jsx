@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Router } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import logo from "../assets/logo.png"; // Replace with your actual logo
 
 export default function Sidebar() {
@@ -14,7 +14,7 @@ export default function Sidebar() {
       {/* Navigation Links */}
       <nav className="flex flex-col p-4 space-y-2">
         <NavLink
-          to="/dashboard"
+          to="/home/dashboard"
           className={({ isActive }) =>
             `px-4 py-2 rounded-lg font-medium text-m ${
               isActive
@@ -27,7 +27,7 @@ export default function Sidebar() {
         </NavLink>
 
         <NavLink
-          to="/inventory"
+          to="/home/inventory"
           className={({ isActive }) =>
             `px-4 py-2 rounded-lg font-medium text-m ${
               isActive
@@ -38,11 +38,31 @@ export default function Sidebar() {
         >
           Inventory
         </NavLink>
-
-        {/* Add more links here */}
-        {/* <NavLink to="/settings" ...>Settings</NavLink> */}
+        <NavLink
+          to="/home/staff list"
+          className={({ isActive }) =>
+            `px-4 py-2 rounded-lg font-medium text-m ${
+              isActive
+                ? "bg-blue-100 text-gray-600"
+                : "text-gray-700 hover:bg-gray-100"
+            }`
+          }
+        >
+          Staff list
+        </NavLink>
+        <NavLink
+          to="/home/register"
+          className={({ isActive }) =>
+            `px-4 py-2 rounded-lg font-medium text-m ${
+              isActive
+                ? "bg-blue-100 text-gray-600"
+                : "text-gray-700 hover:bg-gray-100"
+            }`
+          }
+        >
+          ADD user
+        </NavLink>
       </nav>
     </div>
-    
   );
 }
