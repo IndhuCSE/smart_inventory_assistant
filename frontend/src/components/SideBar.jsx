@@ -1,8 +1,10 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png"; // Replace with your actual logo
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
   const handleDownload = () => {
     const token = localStorage.getItem("token");
     const url = "http://127.0.0.1:8000/inventory/report?format=csv";
@@ -31,6 +33,11 @@ export default function Sidebar() {
       });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
   const navLinkClass = ({ isActive }) =>
     `px-4 py-2 rounded-lg font-medium text-m ${
       isActive
@@ -55,13 +62,19 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* Download at bottom with margin */}
-      <div className="p-4 mb-[15px]">
+      {/* Bottom Buttons */}
+      <div className="p-4 mb-[15px] space-y-2">
         <button
           onClick={handleDownload}
           className="w-full px-4 py-2 rounded-lg font-medium text-m text-gray-700 hover:bg-gray-100"
         >
           Download Report
+        </button>
+        <button
+          onClick={handleLogout}
+          className="w-full px-4 py-2 rounded-lg font-medium text-m text-red-600 hover:bg-red-100"
+        >
+          Logout
         </button>
       </div>
     </div>
