@@ -4,7 +4,7 @@ import Sidebar from "./SideBar";
 import Dashboard from "./Dashboard";
 import Inventory from "./Inventory";
 import Register from "./Register";
-
+import StaffList from "./stafflist";
 export default function Home() {
   return (
     <div className="h-screen w-screen flex bg-white">
@@ -15,6 +15,7 @@ export default function Home() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="inventory" element={<Inventory />} />
           <Route path="register" element={<Register />} />
+          <Route path="stafflist" element={<StaffList/>} />
           
         </Routes>
       </div>

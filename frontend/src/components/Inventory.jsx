@@ -4,13 +4,19 @@ export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedItem, setSelectedItem] = useState(null); // Store selected item for updating
+  const [selectedItem, setSelectedItem] = useState(null);
   const [updatedName, setUpdatedName] = useState('');
   const [updatedQuantity, setUpdatedQuantity] = useState('');
   const [updatedPrice, setUpdatedPrice] = useState('');
   const [updatedLowStockThreshold, setUpdatedLowStockThreshold] = useState('');
 
-  // Fetch inventory items from the backend API
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newQuantity, setNewQuantity] = useState('');
+  const [newPrice, setNewPrice] = useState('');
+  const [newLowStockThreshold, setNewLowStockThreshold] = useState('');
+  const [addError, setAddError] = useState('');
+
   useEffect(() => {
     async function fetchInventory() {
       try {
@@ -19,7 +25,7 @@ export default function Inventory() {
           throw new Error('Failed to fetch inventory items');
         }
         const data = await response.json();
-        setInventoryItems(data);  // Assuming the response is an array of items
+        setInventoryItems(data);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -30,7 +36,6 @@ export default function Inventory() {
     fetchInventory();
   }, []);
 
-  // Function to handle the delete action
   const handleDelete = async (itemId) => {
     try {
       const response = await fetch(`http://127.0.0.1:8000/inventory/${itemId}`, {
@@ -41,14 +46,12 @@ export default function Inventory() {
         throw new Error('Failed to delete item');
       }
 
-      // Remove the deleted item from the state
       setInventoryItems((prevItems) => prevItems.filter(item => item.id !== itemId));
     } catch (error) {
       alert(error.message);
     }
   };
 
-  // Function to handle the update action
   const handleUpdate = async (itemId) => {
     const updatedItem = {
       name: updatedName,
@@ -68,13 +71,12 @@ export default function Inventory() {
         throw new Error('Failed to update item');
       }
 
-      // Update the inventory list after successful update
       setInventoryItems((prevItems) =>
         prevItems.map((item) =>
           item.id === itemId ? { ...item, ...updatedItem } : item
         )
       );
-      setSelectedItem(null); // Close the update form/modal
+      setSelectedItem(null);
     } catch (error) {
       alert(error.message);
     }
@@ -88,11 +90,61 @@ export default function Inventory() {
     setUpdatedLowStockThreshold(item.low_stock_threshold);
   };
 
+  const handleAddItem = async (e) => {
+    e.preventDefault();
+    const exists = inventoryItems.some(item => item.name.toLowerCase() === newName.toLowerCase());
+    if (exists) {
+      setAddError('Item already exists.');
+      return;
+    }
+
+    const newItem = {
+      name: newName,
+      quantity: newQuantity,
+      price: newPrice,
+      low_stock_threshold: newLowStockThreshold,
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/inventory/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newItem),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add item');
+      }
+
+      const createdItem = await response.json();
+      setInventoryItems((prev) => [...prev, createdItem]);
+      setShowAddForm(false);
+    } catch (err) {
+      setAddError(err.message);
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => {
+            setShowAddForm(true);
+            setNewName('');
+            setNewQuantity('');
+            setNewPrice('');
+            setNewLowStockThreshold('');
+            setAddError('');
+          }}
+          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+        >
+          + Add New Item
+        </button>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white rounded-lg shadow-md">
           <thead>
@@ -112,7 +164,7 @@ export default function Inventory() {
                 <td className="px-6 py-4 text-sm space-x-4">
                   <button
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                    onClick={() => handleOpenUpdateForm(item)}  // Open the update form
+                    onClick={() => handleOpenUpdateForm(item)}
                   >
                     Update
                   </button>
@@ -129,70 +181,107 @@ export default function Inventory() {
         </table>
       </div>
 
-      {/* Update form/modal */}
+      {/* Update Form */}
       {selectedItem && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg">
             <h3 className="text-xl font-semibold mb-4">Update Item</h3>
             <form onSubmit={(e) => { e.preventDefault(); handleUpdate(selectedItem.id); }}>
               <div className="mb-4">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Item Name</label>
+                <label className="block text-sm font-medium text-gray-700">Item Name</label>
                 <input
-                  id="name"
                   type="text"
                   value={updatedName}
                   onChange={(e) => setUpdatedName(e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="Enter item name"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Quantity</label>
+                <label className="block text-sm font-medium text-gray-700">Quantity</label>
                 <input
-                  id="quantity"
                   type="number"
                   value={updatedQuantity}
                   onChange={(e) => setUpdatedQuantity(e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="Enter quantity"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
+                <label className="block text-sm font-medium text-gray-700">Price</label>
                 <input
-                  id="price"
                   type="number"
                   value={updatedPrice}
                   onChange={(e) => setUpdatedPrice(e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="Enter price"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="low_stock_threshold" className="block text-sm font-medium text-gray-700">Low Stock Threshold</label>
+                <label className="block text-sm font-medium text-gray-700">Low Stock Threshold</label>
                 <input
-                  id="low_stock_threshold"
                   type="number"
                   value={updatedLowStockThreshold}
                   onChange={(e) => setUpdatedLowStockThreshold(e.target.value)}
                   className="w-full p-2 border rounded-md"
-                  placeholder="Enter low stock threshold"
                 />
               </div>
               <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setSelectedItem(null)}  // Close form
-                  className="px-4 py-2 bg-gray-300 rounded-md"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md"
-                >
-                  Save Changes
-                </button>
+                <button type="button" onClick={() => setSelectedItem(null)} className="px-4 py-2 bg-gray-300 rounded-md">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Item Modal */}
+      {showAddForm && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg">
+            <h3 className="text-xl font-semibold mb-4">Add New Item</h3>
+            <form onSubmit={handleAddItem}>
+              {addError && <div className="text-red-600 mb-2">{addError}</div>}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Item Name</label>
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="w-full p-2 border rounded-md text-black"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                <input
+                  type="number"
+                  value={newQuantity}
+                  onChange={(e) => setNewQuantity(e.target.value)}
+                  className="w-full p-2 border rounded-md text-black"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Price</label>
+                <input
+                  type="number"
+                  value={newPrice}
+                  onChange={(e) => setNewPrice(e.target.value)}
+                  className="w-full p-2 border rounded-md text-black"
+                  required
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Low Stock Threshold</label>
+                <input
+                  type="number"
+                  value={newLowStockThreshold}
+                  onChange={(e) => setNewLowStockThreshold(e.target.value)}
+                  className="w-full p-2 border rounded-md text-black"
+                  required
+                />
+              </div>
+              <div className="flex justify-end space-x-4">
+                <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 bg-gray-300 rounded-md">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-md">Add Item</button>
               </div>
             </form>
           </div>
