@@ -146,9 +146,9 @@ export default function Register() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white  overflow-hidden">
+    <div className="p-8 min-h-screen bg-white  overflow-hidden">
       {/* Sidebar Placeholder */}
-      <div className="w-64 bg-white shadow-md hidden md:block">
+      <div className=" bg-white shadow-md hidden md:block">
         {/* Your sidebar component or nav items go here */}
       </div>
 
