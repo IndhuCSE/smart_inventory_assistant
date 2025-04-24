@@ -78,7 +78,7 @@ export default function StaffList() {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="mb-4">
-        <h2 className="text-2xl font-bold">Staff Members</h2>
+        <h2 className="text-2xl font-bold text-gray-700">Staff Members</h2>
       </div>
 
       <div className="overflow-x-auto">

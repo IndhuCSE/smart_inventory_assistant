@@ -39,10 +39,9 @@ export default function Sidebar() {
   };
 
   const navLinkClass = ({ isActive }) =>
-    `px-4 py-2 rounded-lg font-medium text-m ${
-      isActive
-        ? "bg-blue-100 text-gray-600"
-        : "text-gray-700 hover:bg-gray-100"
+    `px-4 py-2 rounded-lg font-medium text-m ${isActive
+      ? "bg-blue-100 text-gray-600"
+      : "text-gray-700 hover:bg-gray-100"
     }`;
 
   return (
@@ -57,8 +56,8 @@ export default function Sidebar() {
         <nav className="flex flex-col p-4 space-y-2">
           <NavLink to="/home/dashboard" className={navLinkClass}>Dashboard</NavLink>
           <NavLink to="/home/inventory" className={navLinkClass}>Inventory</NavLink>
-          <NavLink to="/home/stafflist" className={navLinkClass}>Staff list</NavLink>
-          <NavLink to="/home/register" className={navLinkClass}>ADD user</NavLink>
+          <NavLink to="/home/stafflist" className={navLinkClass}>Staff List</NavLink>
+          <NavLink to="/home/register" className={navLinkClass}>Add User</NavLink>
         </nav>
       </div>
 
@@ -66,13 +65,14 @@ export default function Sidebar() {
       <div className="p-4 mb-[15px] space-y-2">
         <button
           onClick={handleDownload}
-          className="w-full px-4 py-2 rounded-lg font-medium text-m text-gray-700 hover:bg-gray-100"
+          className="w-full px-4 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700"
         >
           Download Report
         </button>
+
         <button
           onClick={handleLogout}
-          className="w-full px-4 py-2 rounded-lg font-medium text-m text-red-600 hover:bg-red-100"
+          className="w-full px-4 py-2 rounded-lg font-medium text-m text-white bg-red-600 hover:bg-red-700"
         >
           Logout
         </button>
