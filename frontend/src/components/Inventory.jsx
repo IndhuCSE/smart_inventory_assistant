@@ -150,18 +150,18 @@ export default function Inventory() {
           <tbody>
             {inventoryItems.map((item) => (
               <tr key={item.id} className="border-b">
-                <td className="px-6 py-4 text-sm text-gray-700">{item.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{item.quantity}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">${item.price.toFixed(2)}</td>
+                <td className="px-6 py-4 text-base text-gray-700 cursive-text">{item.name}</td>
+                <td className="px-6 py-4 text-base text-gray-700 cursive-text">{item.quantity}</td>
+                <td className="px-6 py-4 text-base text-gray-700 cursive-text">${item.price.toFixed(2)}</td>
                 <td className="px-6 py-4 text-sm space-x-4">
                   <button
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    className="bg-sky-200 text-black px-4 py-2 rounded-md hover:bg-sky-300"
                     onClick={() => handleOpenUpdateForm(item)}
                   >
                     Update
                   </button>
                   <button
-                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
+                    className="bg-pink-200 text-black px-4 py-2 rounded-md hover:bg-pink-300"
                     onClick={() => handleDelete(item.id)}
                   >
                     Delete
@@ -185,7 +185,7 @@ export default function Inventory() {
                   type="text"
                   value={updatedName}
                   onChange={(e) => setUpdatedName(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md text-black"
                 />
               </div>
               <div className="mb-4">
@@ -194,30 +194,30 @@ export default function Inventory() {
                   type="number"
                   value={updatedQuantity}
                   onChange={(e) => setUpdatedQuantity(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md text-black"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Price</label>
+                <label className="block text-sm font-medium text-gray-700 ">Price</label>
                 <input
                   type="number"
                   value={updatedPrice}
                   onChange={(e) => setUpdatedPrice(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md text-black"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Low Stock Threshold</label>
+                <label className="block text-sm font-medium text-gray-700 ">Low Stock Threshold</label>
                 <input
                   type="number"
                   value={updatedLowStockThreshold}
                   onChange={(e) => setUpdatedLowStockThreshold(e.target.value)}
-                  className="w-full p-2 border rounded-md"
+                  className="w-full p-2 border rounded-md text-black"
                 />
               </div>
               <div className="flex justify-end space-x-4">
-                <button type="button" onClick={() => setSelectedItem(null)} className="px-4 py-2 bg-gray-300 rounded-md">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">Save Changes</button>
+                <button type="button" onClick={() => setSelectedItem(null)} className="px-4 py-2 bg-purple-100 rounded-md text-black">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-yellow-100 text-black rounded-md">Save Changes</button>
               </div>
             </form>
           </div>
@@ -272,8 +272,8 @@ export default function Inventory() {
                 />
               </div>
               <div className="flex justify-end space-x-4">
-                <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 bg-gray-300 rounded-md">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-md">Add Item</button>
+                <button type="button" onClick={() => setShowAddForm(false)} className="px-4 py-2 bg-purple-100 rounded-md text-black">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-yellow-100 text-black rounded-md">Add Item</button>
               </div>
             </form>
           </div>

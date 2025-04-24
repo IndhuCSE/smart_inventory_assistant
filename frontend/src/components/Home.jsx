@@ -4,7 +4,7 @@ import Sidebar from "./SideBar";
 import Dashboard from "./Dashboard";
 import Inventory from "./Inventory";
 import Register from "./Register";
-import StaffList from "./stafflist";
+import StaffList from "./StaffList";
 export default function Home() {
   return (
     <div className="h-screen w-screen flex bg-white">

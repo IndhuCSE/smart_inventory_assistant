@@ -64,6 +64,10 @@ class SaleOut(SaleIn):
 class StaffResponse(BaseModel):
     username: str
 
+class StaffOut(BaseModel):
+    username: str
+    role: str
+    
 class StockItem(BaseModel):
     id: int
     name: str
