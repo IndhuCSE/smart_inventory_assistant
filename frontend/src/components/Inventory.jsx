@@ -161,7 +161,7 @@ export default function Inventory() {
                     Update
                   </button>
                   <button
-                    className="bg-pink-200 text-black px-4 py-2 rounded-md hover:bg-pink-300"
+                    className="bg-pink-300 text-black px-4 py-2 rounded-md hover:bg-red-400"
                     onClick={() => handleDelete(item.id)}
                   >
                     Delete

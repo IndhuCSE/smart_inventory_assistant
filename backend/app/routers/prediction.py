@@ -12,14 +12,19 @@ router = APIRouter(prefix="/predict", tags=["predict"])
 @router.post("/sales/predict")
 def predict_from_sales_file(file: UploadFile = File(...)):
     try:
+        if isinstance(file, list):
+         file = file[0]
         df = pd.read_csv(file.file)
+
 
         # Rename columns to match DB model fields
         df = df.rename(columns={"date": "sale_date", "quantity": "quantity_sold"})
 
         # Convert sale_date to datetime
-        df["sale_date"] = pd.to_datetime(df["sale_date"], dayfirst=True)
-
+        df["sale_date"] = pd.to_datetime(df["sale_date"], format="%d-%m-%Y")
+        print(df[df["sale_date"].isna()])
+        print(df.groupby(["item_id", "item_name"]).size())
+        
         # Convert to list of dictionaries
         sales_data = df.to_dict(orient="records")
 
