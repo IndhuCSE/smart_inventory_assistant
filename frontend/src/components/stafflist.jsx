@@ -25,8 +25,14 @@ export default function StaffList() {
         });
 
         if (!response.ok) {
-          const errMessage = await response.text();
-          throw new Error(`Failed to fetch staff list: ${response.status} ${errMessage}`);
+          let errorMsg = `Error ${response.status}`;
+          try {
+            const errData = await response.json();
+            if (errData.detail) errorMsg += `: ${errData.detail}`;
+          } catch {
+            errorMsg += ": Unable to parse error details.";
+          }
+          throw new Error(errorMsg);
         }
 
         const data = await response.json();
@@ -61,11 +67,16 @@ export default function StaffList() {
       });
 
       if (!response.ok) {
-        const errMessage = await response.text();
-        throw new Error(`Failed to delete staff: ${response.status} ${errMessage}`);
+        let errorMsg = `Error ${response.status}`;
+        try {
+          const errData = await response.json();
+          if (errData.detail) errorMsg += `: ${errData.detail}`;
+        } catch {
+          errorMsg += ": Unable to parse error details.";
+        }
+        throw new Error(errorMsg);
       }
-
-      // Remove from UI
+      
       setStaffList((prevList) => prevList.filter(user => user.username !== username));
     } catch (err) {
       alert(err.message);
@@ -73,7 +84,17 @@ export default function StaffList() {
   };
 
   if (loading) return <div className="p-6">Loading staff list...</div>;
-  if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Error: </strong>
+          <span className="block sm:inline">{error}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -92,12 +113,12 @@ export default function StaffList() {
           </thead>
           <tbody>
             {staffList.map((staff) => (
-              <tr key={staff.id} className="border-b">
-                <td className="px-6 py-4 text-sm text-gray-800">{staff.username}</td>
-                <td className="px-6 py-4 text-sm text-gray-800 capitalize">{staff.role}</td>
+              <tr key={staff.username} className="border-b">
+                <td className="px-6 py-4 text-base text-gray-800 cursive-text">{staff.username}</td>
+                <td className="px-6 py-4 text-sm text-gray-800 cursive-text">{staff.role}</td>
                 <td className="px-6 py-4 text-sm">
                   <button
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                    className="px-4 py-2 bg-pink-300 text-white rounded-md hover:bg-red-700"
                     onClick={() => handleDelete(staff.username)}
                   >
                     Deactivate

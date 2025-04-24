@@ -43,17 +43,33 @@ def register_user(
         )
 
     existing = db.query(User).filter(User.username == data.username).first()
+    
     if existing:
-        raise HTTPException(status_code=409, detail="Username already taken")
+        if existing.is_active:
+            # User exists and is active – can't register again
+            raise HTTPException(status_code=409, detail="Username already taken")
+        else:
+            # Soft-deleted user — reactivate
+            existing.hashed_password = get_password_hash(data.password)
+            existing.role = data.role
+            existing.is_active = True
+            db.commit()
+            return {
+                "msg": f"{data.role.capitalize()} '{data.username}' reactivated successfully"
+            }
+    else:
+        # Create new user
+        new_user = User(
+            username=data.username,
+            hashed_password=get_password_hash(data.password),
+            role=data.role
+        )
+        db.add(new_user)
+        db.commit()
+        return {
+            "msg": f"{data.role.capitalize()} '{data.username}' registered successfully"
+        }
 
-    new_user = User(
-        username=data.username,
-        hashed_password=get_password_hash(data.password),
-        role=data.role
-    )
-    db.add(new_user)
-    db.commit()
-    return {"msg": f"{data.role.capitalize()} '{data.username}' registered successfully"}
 
 
 # Dependency to restrict access to store_manager only
@@ -65,7 +81,8 @@ def store_manager_only(current_user: User = Depends(get_current_user)):
 @auth_router.get("/staff", response_model=List[dict])
 def get_all_staff(db: Session = Depends(get_db), get_current_user: User = Depends(store_manager_only)):
     staff = db.query(User).filter(User.role == "staff", User.is_active == True).all()
-    return [{"username": u.username} for u in staff]
+    return [{"username": u.username, "role": u.role} for u in staff]
+
 
 
 

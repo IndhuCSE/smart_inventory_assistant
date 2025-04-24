@@ -65,7 +65,7 @@ export default function Sidebar() {
       <div className="p-4 mb-[15px] space-y-2">
         <button
           onClick={handleDownload}
-          className="w-full px-4 py-2 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-700"
+          className="w-full px-4 py-2 rounded-lg font-medium text-black bg-sky-200 hover:bg-sky-300"
         >
           Download Report
         </button>
