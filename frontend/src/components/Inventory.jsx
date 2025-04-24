@@ -158,9 +158,9 @@ export default function Inventory() {
           <tbody>
             {inventoryItems.map((item) => (
               <tr key={item.id} className="border-b">
-                <td className="px-6 py-4 text-sm text-gray-700">{item.name}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{item.quantity}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">${item.price.toFixed(2)}</td>
+                <td className="px-6 py-4 text-base text-gray-700 cursive-text">{item.name}</td>
+                <td className="px-6 py-4 text-base text-gray-700 cursive-text">{item.quantity}</td>
+                <td className="px-6 py-4 text-base text-gray-700 cursive-text">${item.price.toFixed(2)}</td>
                 <td className="px-6 py-4 text-sm space-x-4">
                   <button
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
