@@ -118,7 +118,7 @@ export default function StaffList() {
                 <td className="px-6 py-4 text-sm text-gray-800 cursive-text">{staff.role}</td>
                 <td className="px-6 py-4 text-sm">
                   <button
-                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                    className="px-4 py-2 bg-pink-300 text-white rounded-md hover:bg-red-700"
                     onClick={() => handleDelete(staff.username)}
                   >
                     Deactivate

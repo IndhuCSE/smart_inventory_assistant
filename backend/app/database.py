@@ -4,6 +4,8 @@ from sqlalchemy.orm import sessionmaker,declarative_base
 
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:indhukavi@localhost/smart_inventory"
 
+
+
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
