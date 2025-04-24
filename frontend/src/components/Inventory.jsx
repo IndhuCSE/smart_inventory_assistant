@@ -21,9 +21,7 @@ export default function Inventory() {
     async function fetchInventory() {
       try {
         const response = await fetch('http://127.0.0.1:8000/inventory/');
-        if (!response.ok) {
-          throw new Error('Failed to fetch inventory items');
-        }
+        if (!response.ok) throw new Error('Failed to fetch inventory items');
         const data = await response.json();
         setInventoryItems(data);
       } catch (error) {
@@ -42,9 +40,7 @@ export default function Inventory() {
         method: 'DELETE',
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to delete item');
-      }
+      if (!response.ok) throw new Error('Failed to delete item');
 
       setInventoryItems((prevItems) => prevItems.filter(item => item.id !== itemId));
     } catch (error) {
@@ -67,9 +63,7 @@ export default function Inventory() {
         body: JSON.stringify(updatedItem),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update item');
-      }
+      if (!response.ok) throw new Error('Failed to update item');
 
       setInventoryItems((prevItems) =>
         prevItems.map((item) =>
@@ -112,9 +106,7 @@ export default function Inventory() {
         body: JSON.stringify(newItem),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to add item');
-      }
+      if (!response.ok) throw new Error('Failed to add item');
 
       const createdItem = await response.json();
       setInventoryItems((prev) => [...prev, createdItem]);
