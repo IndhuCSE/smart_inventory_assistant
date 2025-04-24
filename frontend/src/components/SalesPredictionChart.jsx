@@ -28,26 +28,27 @@ const SalesPredictionChart = () => {
 
             const predictions = res.data;
 
-            const labels = predictions.map((entry) => entry.sale_date);
-            const data = predictions.map((entry) => entry.predicted_quantity);
+            const labels = Object.keys(predictions);
+            const data = Object.values(predictions);
 
             setChartData({
                 labels,
                 datasets: [
                     {
-                        label: "Predicted Sales",
+                        label: "Predicted Sales (Next 30 Days)",
                         data,
-                        backgroundColor: "#3b82f6", // Tailwind blue-500
+                        backgroundColor: "#3b82f6",
                     },
                 ],
             });
         } catch (err) {
             console.error("Prediction upload error:", err);
+            setChartData(null);
         }
     };
 
     return (
-        <div className="w-157 bg-white p-4 rounded-2xl shadow-lg">
+        <div className="w-full bg-white p-6 rounded-2xl shadow-lg">
             <h2 className="text-lg font-semibold text-center mb-2 text-gray-900">Sales Prediction</h2>
             <p className="text-sm text-center text-gray-500 mb-4">Forecasted demand based on recent sales</p>
 
@@ -70,12 +71,24 @@ const SalesPredictionChart = () => {
             )}
 
             <div className="mt-6 flex flex-col md:flex-row items-center justify-center gap-4">
+                {/* Hidden file input */}
                 <input
                     type="file"
                     accept=".csv"
-                    className="text-sm text-gray-700"
+                    id="fileInput"
+                    className="hidden"
                     onChange={(e) => setFile(e.target.files[0])}
                 />
+
+                {/* Styled label as green button */}
+                <label
+                    htmlFor="fileInput"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md font-medium cursor-pointer"
+                >
+                    Choose File
+                </label>
+
+                {/* Predict button */}
                 <button
                     onClick={handleUpload}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium"
