@@ -1,14 +1,12 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Sidebar from "./SideBar";
-
+import React, { useState, useEffect } from "react";
+// import StockLevels from "./StockLevelsGraph";
+import CurrentStockLevel from "./CurrentStockLevel";
 
 export default function Dashboard() {
-
+    
     return (
-        <div className="h-screen w-screen flex bg-white">
-            <Sidebar />
-            <h1>dashboard</h1>
+        <div>
+            <CurrentStockLevel/>
         </div>
     );
 }

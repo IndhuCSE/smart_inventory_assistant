@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker,declarative_base
 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:indhukavi@localhost/smart_inventory"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:sarunyaa@localhost/smart_inventory"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
