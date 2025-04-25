@@ -30,3 +30,11 @@ class Sale(Base):
 
     # Bidirectional relationship with InventoryItem
     item = relationship("InventoryItem", back_populates="sales")
+
+# models.py
+class LowStockAlert(Base):
+    __tablename__ = "low_stock_alerts"
+
+    id = Column(Integer, primary_key=True)
+    item_name = Column(String)
+    quantity = Column(Integer)
