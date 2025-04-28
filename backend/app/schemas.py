@@ -15,6 +15,9 @@ class UserOut(BaseModel):
     class Config:
         from_attributes = True
 
+class ResetPasswordRequest(BaseModel):
+    username: str
+    newPassword: str
 # ---------------------- Inventory Schemas ----------------------
 
 class InventoryBase(BaseModel):

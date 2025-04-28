@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -16,6 +16,8 @@ export default function Inventory() {
   const [newPrice, setNewPrice] = useState('');
   const [newLowStockThreshold, setNewLowStockThreshold] = useState('');
   const [addError, setAddError] = useState('');
+
+  const fileInputRef = useRef(null);  // <-- to trigger hidden file input
 
   useEffect(() => {
     async function fetchInventory() {
@@ -116,12 +118,57 @@ export default function Inventory() {
     }
   };
 
+  const handleImportCSVClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleCSVUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/inventory/import', {  // correct backend URL
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert('CSV imported successfully!');
+        window.location.reload(); // Refresh to show new data
+      } else {
+        alert('Failed to import CSV.');
+      }
+    } catch (error) {
+      alert('Error uploading CSV: ' + error.message);
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between mb-4">
+        <button
+          onClick={handleImportCSVClick}
+          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+        >
+          Import CSV
+        </button>
+
+        <input
+          type="file"
+          accept=".csv"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleCSVUpload}
+        />
+
         <button
           onClick={() => {
             setShowAddForm(true);
@@ -136,6 +183,7 @@ export default function Inventory() {
           + Add New Item
         </button>
       </div>
+
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white rounded-lg shadow-md">

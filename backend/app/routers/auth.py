@@ -7,6 +7,8 @@ from app.utils import get_password_hash, verify_password
 from app.utils import create_access_token, get_current_user
 from pydantic import BaseModel
 from typing import List
+from passlib.context import CryptContext
+from app.schemas import ResetPasswordRequest
 
 auth_router = APIRouter()
 
@@ -24,6 +26,17 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     return {"access_token": token, "token_type": "bearer"}
 
 
+@auth_router.post("/reset-password")
+async def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == request.username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    hashed_password = get_password_hash(request.newPassword)
+    user.hashed_password = hashed_password
+    db.commit()
+
+    return {"message": "Password updated successfully"}
 @auth_router.post("/register")
 def register_user(
     data: RegisterSchema,

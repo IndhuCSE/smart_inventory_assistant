@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException,UploadFile,File
 from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db  # Use the get_db function from database
@@ -7,6 +7,8 @@ from app import schemas, models
 from fastapi.responses import FileResponse
 import csv
 import json
+import pandas as pd
+from io import StringIO
 router = APIRouter(prefix="/inventory", tags=["inventory"])
 
 # List items endpoint (returning Pydantic model)
@@ -94,9 +96,65 @@ def get_low_stock_items(db: Session = Depends(get_db)):
     return items
 
 
+# @router.post("/import")
+# async def import_inventory(file: UploadFile = File(...), db: Session = Depends(get_db)):
+#     if not file.filename.endswith('.csv'):
+#         raise HTTPException(status_code=400, detail="File must be a CSV")
+    
+#     content = await file.read()
+#     csv_content = content.decode('utf-8')
+#     reader = csv.DictReader(StringIO(csv_content))
 
+#     for row in reader:
+#         try:
+#             item = InventoryItem(
+#                 name=row['name'],
+#                 quantity=int(row['quantity']),
+#                 price=float(row['price']),
+#                 low_stock_threshold=int(row['low_stock_threshold'])
+#             )
+#             db.add(item)
+#         except Exception as e:
+#             raise HTTPException(status_code=400, detail=f"Invalid data in CSV: {str(e)}")
 
+#     db.commit()
+#     return {"message": "Inventory imported successfully!"}
 
+@router.post("/import")
+async def import_inventory(file: UploadFile = File(...), db: Session = Depends(get_db)):
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="File must be a CSV")
+
+    content = await file.read()
+    csv_content = content.decode('utf-8')
+    reader = csv.DictReader(StringIO(csv_content))
+
+    for row in reader:
+        try:
+            item_name = row['name'].strip()
+
+            # Check if the item already exists
+            existing_item = db.query(InventoryItem).filter(InventoryItem.name == item_name).first()
+
+            if existing_item:
+                # If it exists, update the quantity
+                existing_item.quantity += int(row['quantity'])
+                existing_item.price = int(row['price'])
+            else:
+                # If it doesn't exist, create a new item
+                new_item = InventoryItem(
+                    name=item_name,
+                    quantity=int(row['quantity']),
+                    price=float(row['price']),
+                    low_stock_threshold=int(row['low_stock_threshold'])
+                )
+                db.add(new_item)
+
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid data in CSV: {str(e)}")
+
+    db.commit()
+    return {"message": "Inventory imported successfully!"}
 @router.get("/report", response_class=FileResponse)
 def download_report(format: str = "csv", db: Session = Depends(get_db)):
     items = db.query(models.InventoryItem).all()
