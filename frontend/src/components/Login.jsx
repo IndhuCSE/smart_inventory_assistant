@@ -28,7 +28,7 @@ export default function Login() {
   
       const data = await response.json();
       localStorage.setItem("token", data.access_token); // store token for later
-      navigate("/home");
+      navigate("/home/dashboard"); // Redirect to the dashboard or home page
     } catch (error) {
       alert(error.message);
     }
