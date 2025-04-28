@@ -114,8 +114,8 @@ export default function StaffList() {
           <tbody>
             {staffList.map((staff) => (
               <tr key={staff.username} className="border-b">
-                <td className="px-6 py-4 text-base text-gray-800 cursive-text">{staff.username}</td>
-                <td className="px-6 py-4 text-sm text-gray-800 cursive-text">{staff.role}</td>
+                <td className="px-6 py-4 text-base text-gray-800">{staff.username}</td>
+                <td className="px-6 py-4 text-sm text-gray-800">{staff.role}</td>
                 <td className="px-6 py-4 text-sm">
                   <button
                     className="px-4 py-2 bg-pink-300 text-white rounded-md hover:bg-red-700"
