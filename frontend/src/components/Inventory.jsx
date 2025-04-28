@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function Inventory() {
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -18,6 +18,7 @@ export default function Inventory() {
   const [addError, setAddError] = useState('');
 
   const fileInputRef = useRef(null);  // <-- to trigger hidden file input
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     async function fetchInventory() {
@@ -148,42 +149,68 @@ export default function Inventory() {
     }
   };
 
+  const filteredInventory = inventoryItems.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+
+  );
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <div className="flex justify-between mb-4 items-center">
-        <button
-          onClick={handleImportCSVClick}
-          className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
-        >
-          Import CSV
-        </button>
+      <div className="flex justify-between items-center mb-4">
+        {/* Search bar on the left */}
+        <div className="flex items-center w-1/2 text-gray-800">
+          <input
+            type="text"
+            placeholder="Search inventory..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border-0 rounded-4xl px-4 py-2 text-black w-full bg-white"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="ml-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
 
-        <input
-          type="file"
-          accept=".csv"
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-          onChange={handleCSVUpload}
-        />
+        {/* Buttons on the right */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={handleImportCSVClick}
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+          >
+            Import CSV
+          </button>
 
-        <button
-          onClick={() => {
-            setShowAddForm(true);
-            setNewName('');
-            setNewQuantity('');
-            setNewPrice('');
-            setNewLowStockThreshold('');
-            setAddError('');
-          }}
-          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
-        >
-          + Add New Item
-        </button>
+          <input
+            type="file"
+            accept=".csv"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleCSVUpload}
+          />
+
+          <button
+            onClick={() => {
+              setShowAddForm(true);
+              setNewName('');
+              setNewQuantity('');
+              setNewPrice('');
+              setNewLowStockThreshold('');
+              setAddError('');
+            }}
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+          >
+            + Add New Item
+          </button>
+        </div>
       </div>
-
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white rounded-lg shadow-md">
@@ -195,29 +222,39 @@ export default function Inventory() {
               <th className="px-6 py-3 text-sm font-medium text-gray-700">Actions</th>
             </tr>
           </thead>
+
           <tbody>
-            {inventoryItems.map((item) => (
-              <tr key={item.id} className="border-b">
-                <td className="px-6 py-4 text-base text-gray-700 cursive-text">{item.name}</td>
-                <td className="px-6 py-4 text-base text-gray-700 cursive-text">{item.quantity}</td>
-                <td className="px-6 py-4 text-base text-gray-700 cursive-text">${item.price.toFixed(2)}</td>
-                <td className="px-6 py-4 text-sm space-x-4">
-                  <button
-                    className="bg-sky-200 text-black px-4 py-2 rounded-md hover:bg-sky-300"
-                    onClick={() => handleOpenUpdateForm(item)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="bg-pink-300 text-black px-4 py-2 rounded-md hover:bg-red-400"
-                    onClick={() => handleDelete(item.id)}
-                  >
-                    Delete
-                  </button>
+            {filteredInventory.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center py-6 text-gray-500">
+                  No inventory found.
                 </td>
               </tr>
-            ))}
+            ) : (
+              filteredInventory.map((item) => (
+                <tr key={item.id} className="border-b">
+                  <td className="px-6 py-4 text-base text-gray-700">{item.name}</td>
+                  <td className="px-6 py-4 text-base text-gray-700">{item.quantity}</td>
+                  <td className="px-6 py-4 text-base text-gray-700">₹{item.price.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm space-x-4">
+                    <button
+                      className="bg-sky-200 text-black px-4 py-2 rounded-md hover:bg-sky-300"
+                      onClick={() => handleOpenUpdateForm(item)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className="bg-pink-300 text-black px-4 py-2 rounded-md hover:bg-red-400"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
+
         </table>
       </div>
 
